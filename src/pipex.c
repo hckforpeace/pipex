@@ -6,67 +6,79 @@
 /*   By: pierre <pierre@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 23:46:11 by pierre            #+#    #+#             */
-/*   Updated: 2024/06/04 19:18:33 by pierre           ###   ########.fr       */
+/*   Updated: 2024/06/08 20:06:42 by pierre           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "../include/pipex.h";
 
-void	pipex(char **cmds, char **envp, t_pipe content)
+#include "../include/pipex.h"
+
+void	pipex(char **cmds, t_pipe *data, int argc)
 {
-	int	pid;
 	int	i;
-	t_disp *data;
+	i = 2;
 
-	i = 1;
-	data = init_data(data);
-	if (content.fd < 0)
-		i++;
-	while (cmds[i])
+	if (data->infile < 0)
+				i++;
+	while (i < argc - 1)
 	{
 		if (fork() == 0)
 		{
-			;
+			work(data, i, cmds[i]);
+			exit(EXIT_SUCCESS);
 		}
+		i++;
+	}
+	while(i < 2)
+	{
+		wait(NULL);
 		i++;
 	}
 }
 
-t_pipe	*init_data(int filed)
+void work(t_pipe *data, int idx, char *cmd)
 {
-	int fd[2];
-	t_pipe *data;
+	char *path;
+	char **argv;
 
-	if (pipe(fd) < 0)
+	argv = ft_split(cmd, ' ');
+	path = gettest_path(data->paths, argv[0]);
+	if (idx == 2)
 	{
-		perror("bash: pipe");
-		exit(errno);
+		close(data->outfile);
+		close(data->read);
+		dup2(data->infile, STDIN_FILENO);
+		dup2(data->write, STDOUT_FILENO);
 	}
-
-	data = (t_pipe *)malloc(sizeof(struct s_pipe));
-	data->fd = (int *)malloc(sizeof(int));
-	data->read = (int *)malloc(sizeof(int));
-	data->write = (int *)malloc(sizeof(int));
-
-	*(data->fd) = filed;
-	*(data->read) = fd[0];
-	*(data->write) = fd[1];
-	return (data);
+	else
+	{
+		close(data->infile);
+		close(data->write);
+		dup2(data->read, STDIN_FILENO);
+		dup2(data->outfile, STDOUT_FILENO);
+	}
+	executer(path, argv, data);
 }
 
-void	clear_pipe(t_pipe *data)
+void	executer(char *path, char **argv, t_pipe *data)
 {
-	free(data->fd);
-	free(data->read);
-	free(data->write);
-	free(data);
+	int i = 0;
+	while (argv[i])
+	{
+		fprintf(stderr,"%s\n", argv[i]);
+		i++;
+	}
+	fprintf(stderr, "%s\n", path);
+	if (execve(path, argv, data->envp) < 0)
+	{
+		error_disp(argv[0], ": command not found\n");
+		clearchld_data(path, argv, data);
+		exit(127);
+	}
 }
 
-void work(t_pipe *data, int idx, char **env)
+void clearchld_data(char *path, char **argv, t_pipe *data)
 {
-	if (idx == 1)
-	{
-		dup2(*data->fd, STDIN_FILENO);
-		dup2(STDOUT_FILENO, data->write);
-	}
-	execve();
+	clear_wordar(argv);
+	free(path);
+	clear_close(data);
 }
