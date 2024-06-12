@@ -30,6 +30,7 @@ t_pipe	init_data(char **argv, int argc, char **envp)
 	data.limiter = NULL;
 	data.outfile = argv[argc - 1];
 	data.infile = argv[1];
+	data.envp = envp;
 	return (data);
 }
 

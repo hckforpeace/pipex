@@ -22,8 +22,8 @@ void	error_disp(char *cmd, char *error_message)
 	error_len = ft_strlen(error_message);
 	ft_memcpy(buffer, cmd, cmd_len);
 	ft_memcpy(buffer + cmd_len, error_message, error_len);
-	ft_memcpy(buffer + cmd_len + error_len + 1, "\n", 1);
-	buffer[cmd_len + error_len + 1] = 0;
+	ft_memcpy(buffer + cmd_len + error_len, "\n", 1);
+	buffer[cmd_len + error_len + 2] = 0;
 	write(STDERR_FILENO, buffer, error_len + cmd_len + 1);
 }
 
@@ -37,8 +37,8 @@ void	error_disp_exit(char *cmd, char *error_message, int eno)
 	error_len = ft_strlen(error_message);
 	ft_memcpy(buffer, cmd, cmd_len);
 	ft_memcpy(buffer + cmd_len, error_message, error_len);
-	ft_memcpy(buffer + cmd_len + error_len + 1, "\n", 1);
-	buffer[cmd_len + error_len + 1] = 0;
+	ft_memcpy(buffer + cmd_len + error_len, "\n", 1);
+	buffer[cmd_len + error_len + 2] = 0;
 	write(STDERR_FILENO, buffer, error_len + cmd_len + 1);
 	exit(eno);
 }
