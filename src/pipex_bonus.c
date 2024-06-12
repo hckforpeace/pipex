@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
+/*   pipex_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pierre <pierre@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/03 23:46:11 by pierre            #+#    #+#             */
-/*   Updated: 2024/06/12 17:20:26 by pierre           ###   ########.fr       */
+/*   Created: 2024/06/12 01:25:47 by pierre            #+#    #+#             */
+/*   Updated: 2024/06/12 17:37:01 by pierre           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,34 @@ void	pipex(char **cmds, t_pipe data, int argc)
 	int	i;
 
 	i = 3;
-	redirect_io(data, cmds[2], READ_FROM_FILE);
+	if (data.heredoc)
+		domydoc(data);
+	else
+		redirect_io(data, cmds[2], READ_FROM_FILE);
 	while (i < argc - 2)
 	{
 		redirect_io( data, cmds[i], PIPE);
 		i++;
 	}
-	redirect_io(data, cmds[i], WRITE_TO_FILE);
+	if (data.heredoc)
+		redirect_io(data, cmds[i], HERE_DOC);
+	else
+		redirect_io(data, cmds[i], WRITE_TO_FILE);
+	wait_children(argc, data.heredoc);
+}
+
+void	wait_children(int argc, int heredoc)
+{
+	int i;
+	int	nbr_children;
+
+	if (heredoc)
+		nbr_children = argc -4;
+	else
+		nbr_children = argc - 3;
+
 	i = 0;
-	while (i < argc - 3)
+	while (i < argc - nbr_children)
 	{
 		wait(NULL);
 		i++;
@@ -36,7 +55,6 @@ void redirect_io(t_pipe data, char *cmd, int flag)
 {
 	int	fd[2];
 	int	child;
-	
 	if (pipe(fd) < 0)
 	{
 		perror("pipe");
@@ -72,12 +90,12 @@ void redirect_files(char *cmd , t_pipe data, int *pipe, int flag)
 		}
 		close(pipe[1]);
 		if (flag == READ_FROM_FILE)
-			redirect_infile(data.infile);
+			redirect(data.infile, flag);
 		executer(data, cmd);
 		return ;
 	}
 	close(pipe[1]);
-	redirect_outfile(data.outfile);
+	redirect(data.outfile, flag);
 	executer(data, cmd);
 	
 }
@@ -102,32 +120,28 @@ void	executer(t_pipe data, char *cmd)
 		exit(126);
 	}
 }
-void	redirect_outfile(char *outfile)
+
+void	redirect(char *file, int flag)
 {
 	int	fd;
 
-	fd = open(outfile, O_WRONLY |  O_CREAT | O_TRUNC, 0644);
+	if (flag == READ_FROM_FILE)
+		fd = open(file, O_RDONLY);
+	else if(flag == WRITE_TO_FILE)
+		fd = open(file, O_CREAT | O_WRONLY | O_TRUNC, 0664);
+	else
+		fd = open(file, O_CREAT | O_WRONLY | O_APPEND, 0664);
 	if (fd < 0)
-		error_disp_exit(outfile, ": open error", 1);
-	if (dup2(fd, STDOUT_FILENO) < 0)
+		error_disp_exit(file, ": open error", 1);
+	if (flag == READ_FROM_FILE)
 	{
-		perror("dup2");
-		exit(1);
+		if (dup2(fd, STDIN_FILENO) < 0)
+			error_disp_exit("dup2: ",strerror(errno), 1);
 	}
-	close(fd);
-}
-
-void redirect_infile(char *infile)
-{
-	int	fd;
-
-	fd = open(infile, O_RDONLY);
-	if (fd < 0)
-		error_disp_exit(infile, ": open error", 1);
-	if (dup2(fd, STDIN_FILENO) < 0)
+	if (flag == WRITE_TO_FILE || flag == HERE_DOC)
 	{
-		perror("dup2");
-		exit(1);
+		if (dup2(fd, STDOUT_FILENO) < 0)
+			error_disp_exit("dup2: ",strerror(errno), 1);
 	}
 	close(fd);
 }
