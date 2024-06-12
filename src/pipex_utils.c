@@ -6,7 +6,7 @@
 /*   By: pierre <pierre@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 01:28:30 by pierre            #+#    #+#             */
-/*   Updated: 2024/06/12 17:36:23 by pierre           ###   ########.fr       */
+/*   Updated: 2024/06/12 18:29:32 by pbeyloun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	domydoc(t_pipe data)
 	close(fd[0]);
 }
 
-void heredoc_work(char *limiter, int *pipe_fd)
+void	heredoc_work(char *limiter, int *pipe_fd)
 {
 	int		limiter_len;
 	char	*line;
@@ -51,7 +51,6 @@ void heredoc_work(char *limiter, int *pipe_fd)
 		write(STDOUT_FILENO, "here_doc > ", 11);
 		line = get_next_line(STDIN_FILENO);
 	}
-	fprintf(stderr, "**%s\n", line);
 	if (!line)
 		error_disp_exit("heredoc: ", "CTRL + d", 127);
 	else

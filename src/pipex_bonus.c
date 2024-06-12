@@ -6,7 +6,7 @@
 /*   By: pierre <pierre@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 01:25:47 by pierre            #+#    #+#             */
-/*   Updated: 2024/06/12 17:37:01 by pierre           ###   ########.fr       */
+/*   Updated: 2024/06/12 18:24:41 by pbeyloun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	pipex(char **cmds, t_pipe data, int argc)
 		redirect_io(data, cmds[2], READ_FROM_FILE);
 	while (i < argc - 2)
 	{
-		redirect_io( data, cmds[i], PIPE);
+		redirect_io(data, cmds[i], PIPE);
 		i++;
 	}
 	if (data.heredoc)
@@ -35,14 +35,13 @@ void	pipex(char **cmds, t_pipe data, int argc)
 
 void	wait_children(int argc, int heredoc)
 {
-	int i;
+	int	i;
 	int	nbr_children;
 
 	if (heredoc)
 		nbr_children = argc -4;
 	else
 		nbr_children = argc - 3;
-
 	i = 0;
 	while (i < argc - nbr_children)
 	{
@@ -51,10 +50,11 @@ void	wait_children(int argc, int heredoc)
 	}
 }
 
-void redirect_io(t_pipe data, char *cmd, int flag)
+void	redirect_io(t_pipe data, char *cmd, int flag)
 {
 	int	fd[2];
 	int	child;
+
 	if (pipe(fd) < 0)
 	{
 		perror("pipe");
@@ -77,9 +77,8 @@ void redirect_io(t_pipe data, char *cmd, int flag)
 	close(fd[0]);
 }
 
-void redirect_files(char *cmd , t_pipe data, int *pipe, int flag)
+void	redirect_files(char *cmd, t_pipe data, int *pipe, int flag)
 {
-
 	close(pipe[0]);
 	if (flag == READ_FROM_FILE || flag == PIPE)
 	{
@@ -97,13 +96,13 @@ void redirect_files(char *cmd , t_pipe data, int *pipe, int flag)
 	close(pipe[1]);
 	redirect(data.outfile, flag);
 	executer(data, cmd);
-	
 }
+
 void	executer(t_pipe data, char *cmd)
 {
-	char *path;
-	char **argv;
-	
+	char	*path;
+	char	**argv;
+
 	argv = ft_split(cmd, ' ');
 	path = gettest_path(get_paths(data.envp), argv[0]);
 	if (!path)
@@ -119,29 +118,4 @@ void	executer(t_pipe data, char *cmd)
 		clear_wordar(argv);
 		exit(126);
 	}
-}
-
-void	redirect(char *file, int flag)
-{
-	int	fd;
-
-	if (flag == READ_FROM_FILE)
-		fd = open(file, O_RDONLY);
-	else if(flag == WRITE_TO_FILE)
-		fd = open(file, O_CREAT | O_WRONLY | O_TRUNC, 0664);
-	else
-		fd = open(file, O_CREAT | O_WRONLY | O_APPEND, 0664);
-	if (fd < 0)
-		error_disp_exit(file, ": open error", 1);
-	if (flag == READ_FROM_FILE)
-	{
-		if (dup2(fd, STDIN_FILENO) < 0)
-			error_disp_exit("dup2: ",strerror(errno), 1);
-	}
-	if (flag == WRITE_TO_FILE || flag == HERE_DOC)
-	{
-		if (dup2(fd, STDOUT_FILENO) < 0)
-			error_disp_exit("dup2: ",strerror(errno), 1);
-	}
-	close(fd);
 }

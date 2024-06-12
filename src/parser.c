@@ -6,13 +6,13 @@
 /*   By: pierre <pierre@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 00:26:23 by pierre            #+#    #+#             */
-/*   Updated: 2024/06/11 21:07:08 by pierre           ###   ########.fr       */
+/*   Updated: 2024/06/12 18:21:15 by pbeyloun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
 
-char *get_paths(char **env)
+char	*get_paths(char **env)
 {
 	if (env == NULL)
 		return (NULL);
@@ -23,12 +23,12 @@ char *get_paths(char **env)
 	return (NULL);
 }
 
-char *gettest_path(char *envpath, char *cmd)
+char	*gettest_path(char *envpath, char *cmd)
 {
-	char *path;
-	char **paths;
-	int	cmd_len;
-	int	i;
+	char	*path;
+	char	**paths;
+	int		cmd_len;
+	int		i;
 
 	i = 0;
 	cmd_len = ft_strlen(cmd);
@@ -65,9 +65,9 @@ void	clear_wordar(char **str)
 	free(str);
 }
 
-char *add_cmdtopath(char **paths, char *cmd, int cmd_len, int idx)
+char	*add_cmdtopath(char **paths, char *cmd, int cmd_len, int idx)
 {
-	char *path;
+	char	*path;
 
 	path = (char *)malloc(sizeof(char) * (cmd_len + ft_strlen(paths[idx]) + 2));
 	if (!path)

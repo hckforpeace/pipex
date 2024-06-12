@@ -19,7 +19,6 @@
 # include <stdarg.h>
 # include <fcntl.h>
 
-
 typedef struct s_list
 {
 	void			*content;

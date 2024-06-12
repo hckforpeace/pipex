@@ -6,7 +6,7 @@
 /*   By: pierre <pierre@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 23:46:11 by pierre            #+#    #+#             */
-/*   Updated: 2024/06/12 17:20:26 by pierre           ###   ########.fr       */
+/*   Updated: 2024/06/12 18:28:50 by pbeyloun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	pipex(char **cmds, t_pipe data, int argc)
 	redirect_io(data, cmds[2], READ_FROM_FILE);
 	while (i < argc - 2)
 	{
-		redirect_io( data, cmds[i], PIPE);
+		redirect_io(data, cmds[i], PIPE);
 		i++;
 	}
 	redirect_io(data, cmds[i], WRITE_TO_FILE);
@@ -32,11 +32,11 @@ void	pipex(char **cmds, t_pipe data, int argc)
 	}
 }
 
-void redirect_io(t_pipe data, char *cmd, int flag)
+void	redirect_io(t_pipe data, char *cmd, int flag)
 {
 	int	fd[2];
 	int	child;
-	
+
 	if (pipe(fd) < 0)
 	{
 		perror("pipe");
@@ -59,9 +59,8 @@ void redirect_io(t_pipe data, char *cmd, int flag)
 	close(fd[0]);
 }
 
-void redirect_files(char *cmd , t_pipe data, int *pipe, int flag)
+void	redirect_files(char *cmd, t_pipe data, int *pipe, int flag)
 {
-
 	close(pipe[0]);
 	if (flag == READ_FROM_FILE || flag == PIPE)
 	{
@@ -72,20 +71,20 @@ void redirect_files(char *cmd , t_pipe data, int *pipe, int flag)
 		}
 		close(pipe[1]);
 		if (flag == READ_FROM_FILE)
-			redirect_infile(data.infile);
+			redirect(data.infile, flag);
 		executer(data, cmd);
 		return ;
 	}
 	close(pipe[1]);
-	redirect_outfile(data.outfile);
+	redirect(data.outfile, flag);
 	executer(data, cmd);
-	
 }
+
 void	executer(t_pipe data, char *cmd)
 {
-	char *path;
-	char **argv;
-	
+	char	*path;
+	char	**argv;
+
 	argv = ft_split(cmd, ' ');
 	path = gettest_path(get_paths(data.envp), argv[0]);
 	if (!path)
@@ -102,11 +101,12 @@ void	executer(t_pipe data, char *cmd)
 		exit(126);
 	}
 }
-void	redirect_outfile(char *outfile)
+
+/* void	redirect_outfile(char *outfile)
 {
 	int	fd;
 
-	fd = open(outfile, O_WRONLY |  O_CREAT | O_TRUNC, 0644);
+	fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd < 0)
 		error_disp_exit(outfile, ": open error", 1);
 	if (dup2(fd, STDOUT_FILENO) < 0)
@@ -117,7 +117,7 @@ void	redirect_outfile(char *outfile)
 	close(fd);
 }
 
-void redirect_infile(char *infile)
+void	redirect_infile(char *infile)
 {
 	int	fd;
 
@@ -130,4 +130,4 @@ void redirect_infile(char *infile)
 		exit(1);
 	}
 	close(fd);
-}
+} */
