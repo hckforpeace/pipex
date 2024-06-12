@@ -3,36 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pierre <pierre@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pbeyloun <pbeyloun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 23:46:11 by pierre            #+#    #+#             */
-/*   Updated: 2024/06/12 18:28:50 by pbeyloun         ###   ########.fr       */
+/*   Updated: 2024/06/12 21:20:57 by pbeyloun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
 
-void	pipex(char **cmds, t_pipe data, int argc)
+int	pipex(char **cmds, t_pipe data, int argc)
 {
-	int	i;
+	int		i;
+	pid_t	last_child;
 
 	i = 3;
-	redirect_io(data, cmds[2], READ_FROM_FILE);
+	last_child = redirect_io(data, cmds[2], READ_FROM_FILE);
 	while (i < argc - 2)
 	{
-		redirect_io(data, cmds[i], PIPE);
+		last_child = redirect_io(data, cmds[i], PIPE);
 		i++;
 	}
-	redirect_io(data, cmds[i], WRITE_TO_FILE);
-	i = 0;
-	while (i < argc - 3)
-	{
-		wait(NULL);
-		i++;
-	}
+	last_child = redirect_io(data, cmds[i], WRITE_TO_FILE);
+	return (wait_children(last_child));
 }
 
-void	redirect_io(t_pipe data, char *cmd, int flag)
+int	redirect_io(t_pipe data, char *cmd, int flag)
 {
 	int	fd[2];
 	int	child;
@@ -57,6 +53,7 @@ void	redirect_io(t_pipe data, char *cmd, int flag)
 		exit(1);
 	}
 	close(fd[0]);
+	return (child);
 }
 
 void	redirect_files(char *cmd, t_pipe data, int *pipe, int flag)
@@ -89,45 +86,15 @@ void	executer(t_pipe data, char *cmd)
 	path = gettest_path(get_paths(data.envp), argv[0]);
 	if (!path)
 	{
-		error_disp(cmd, ": command not found\n");
+		error_disp(cmd, ": command not found");
 		clear_wordar(argv);
 		exit(127);
 	}
 	if (execve(path, argv, data.envp) < 0)
 	{
-		error_disp(cmd, ": command invoked can not execute\n");
+		error_disp(cmd, ": command invoked can not execute");
 		free(path);
 		clear_wordar(argv);
 		exit(126);
 	}
 }
-
-/* void	redirect_outfile(char *outfile)
-{
-	int	fd;
-
-	fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd < 0)
-		error_disp_exit(outfile, ": open error", 1);
-	if (dup2(fd, STDOUT_FILENO) < 0)
-	{
-		perror("dup2");
-		exit(1);
-	}
-	close(fd);
-}
-
-void	redirect_infile(char *infile)
-{
-	int	fd;
-
-	fd = open(infile, O_RDONLY);
-	if (fd < 0)
-		error_disp_exit(infile, ": open error", 1);
-	if (dup2(fd, STDIN_FILENO) < 0)
-	{
-		perror("dup2");
-		exit(1);
-	}
-	close(fd);
-} */

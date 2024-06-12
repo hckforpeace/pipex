@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pierre <pierre@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pbeyloun <pbeyloun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 01:28:30 by pierre            #+#    #+#             */
-/*   Updated: 2024/06/12 18:29:32 by pbeyloun         ###   ########.fr       */
+/*   Updated: 2024/06/12 21:21:20 by pbeyloun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,20 +59,20 @@ void	heredoc_work(char *limiter, int *pipe_fd)
 	exit(EXIT_SUCCESS);
 }
 
-/* 	char	*line;
+int	wait_children(pid_t last_child)
+{
+	int	status;
+	int	retcode;
 
-	close(fd[0]);
-	write(STDOUT_FILENO, "heredoc> ", 9);
-	line = get_next_line(STDIN_FILENO);
-	while (line && ft_strcmp(line, limiter))
+	while (ECHILD != errno)
 	{
-		write(fd[1], line, ft_strlen(line));
-		free(line);
-		write(STDOUT_FILENO, "heredoc> ", 9);
-		line = get_next_line(STDIN_FILENO);
+		if (waitpid(0, &status, 0) == last_child)
+		{
+			if (WIFEXITED(status))
+				retcode = WEXITSTATUS(status);
+			else
+				retcode = WSTOPSIG(status);
+		}
 	}
-	if (!line)
-		error_disp_exit("here_doc", ": ctrl d", 127);
-	free(line);
-	close(fd[1]);
-	exit(EXIT_SUCCESS); */
+	return (retcode);
+}

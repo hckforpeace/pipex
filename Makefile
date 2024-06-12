@@ -19,8 +19,8 @@
 # make fclean -C libft
 # 
 # 
-SRC= main.c pipex.c parser.c error.c
-BONUS = main.c pipex_bonus.c parser.c error.c pipex_utils.c
+SRC= main.c pipex.c parser.c error.c pipex_utils.c
+BONUS = main_bonus.c pipex_bonus.c parser.c error.c pipex_utils.c
 NAME= pipex
 OBJS= $(SRC:.c=.o)
 OBJS_BONUS= $(BONUS:.c=.o)

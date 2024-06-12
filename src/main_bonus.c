@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pbeyloun <pbeyloun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/03 23:46:11 by pierre            #+#    #+#             */
-/*   Updated: 2024/06/12 21:26:24 by pbeyloun         ###   ########.fr       */
+/*   Created: 2024/06/12 19:50:43 by pbeyloun          #+#    #+#             */
+/*   Updated: 2024/06/12 21:25:42 by pbeyloun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,34 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_pipe	data;
 
-	if (argc != 5)
-		error_disp_exit("error:", " wrong input", 1);
+	if (argc < 5)
+	{
+		error_disp("error:", " wrong input");
+		exit(1);
+	}
 	data = init_data(argv, argc, envp);
-	return (pipex(argv, data, argc));
+	return (pipex_bonus(argv, data, argc));
 }
 
 t_pipe	init_data(char **argv, int argc, char **envp)
 {
 	t_pipe	data;
 
-	data.heredoc = 0;
-	data.limiter = NULL;
-	data.outfile = argv[argc - 1];
-	data.infile = argv[1];
+	data.envp = envp;
+	if (!ft_strcmp("here_doc", argv[1]))
+	{
+		data.heredoc = 1;
+		data.limiter = argv[2];
+		data.outfile = argv[argc - 1];
+		data.infile = NULL;
+	}
+	else
+	{
+		data.heredoc = 0;
+		data.limiter = NULL;
+		data.outfile = argv[argc - 1];
+		data.infile = argv[1];
+	}
 	return (data);
 }
 
