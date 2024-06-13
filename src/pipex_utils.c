@@ -6,7 +6,7 @@
 /*   By: pbeyloun <pbeyloun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 01:28:30 by pierre            #+#    #+#             */
-/*   Updated: 2024/06/12 21:21:20 by pbeyloun         ###   ########.fr       */
+/*   Updated: 2024/06/13 18:44:13 by pbeyloun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,16 @@ void	domydoc(t_pipe data)
 	int	ret;
 
 	if (pipe(fd) < 0)
-	{
-		perror("pipe");
-		exit(1);
-	}
+		error_disp_exit("pipex: pipe: ", strerror(errno), 1);
 	ret = fork();
 	if (ret < 0)
-		error_disp_exit("fork", strerror(errno), 127);
+		error_disp_exit("fork", strerror(errno), 1);
 	if (ret == 0)
 		heredoc_work(data.limiter, fd);
 	wait(NULL);
 	close(fd[1]);
 	if (dup2(fd[0], STDIN_FILENO) < 0)
-		error_disp_exit("dup2", strerror(errno), 127);
+		error_disp_exit("dup2", strerror(errno), 1);
 	close(fd[0]);
 }
 
