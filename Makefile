@@ -25,3 +25,4 @@ fclean: clean
 		make fclean -C libft
 re: fclean all
 
+.PHONY: fclean clean re bonus

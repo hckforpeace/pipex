@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pbeyloun <pbeyloun@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pierre <pierre@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 01:25:47 by pierre            #+#    #+#             */
-/*   Updated: 2024/06/13 20:42:07 by pbeyloun         ###   ########.fr       */
+/*   Updated: 2024/06/14 00:46:33 by pierre           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,18 @@ void	executer(t_pipe data, char *cmd)
 	char	*path;
 	char	**argv;
 
-	argv = ft_split(cmd, ' ');
-	path = gettest_path(get_paths(data.envp), argv[0]);
-	if (!path)
-		error_disp_exit("pipex: path: ", strerror(errno), 1);
+	if (!access(cmd, F_OK))
+		path = cmd;
+	else
+	{
+		argv = ft_split(cmd, ' ');
+		path = gettest_path(get_paths(data.envp), argv[0]);
+		if (!path)
+		{
+			clear_wordar(argv);
+			error_disp_exit("pipex: path: ", "command not found", 127);
+		}
+	}
 	if (execve(path, argv, data.envp) < 0)
 	{
 		free(path);
