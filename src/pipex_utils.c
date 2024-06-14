@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pbeyloun <pbeyloun@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pierre <pierre@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 01:28:30 by pierre            #+#    #+#             */
-/*   Updated: 2024/06/13 18:44:13 by pbeyloun         ###   ########.fr       */
+/*   Updated: 2024/06/14 13:55:32 by pierre           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
+/* creates a child to manage the here doc and waits for it to end */
 
 void	domydoc(t_pipe data)
 {
@@ -30,6 +31,8 @@ void	domydoc(t_pipe data)
 		error_disp_exit("dup2", strerror(errno), 1);
 	close(fd[0]);
 }
+/* child read on STDIN until reading limiter its writes every time 
+	on pipe[1] */
 
 void	heredoc_work(char *limiter, int *pipe_fd)
 {
@@ -55,6 +58,7 @@ void	heredoc_work(char *limiter, int *pipe_fd)
 	close(pipe_fd[1]);
 	exit(EXIT_SUCCESS);
 }
+/* waits for all children */
 
 int	wait_children(pid_t last_child)
 {

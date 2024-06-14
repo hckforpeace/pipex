@@ -6,11 +6,13 @@
 /*   By: pierre <pierre@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 23:46:11 by pierre            #+#    #+#             */
-/*   Updated: 2024/06/14 00:46:39 by pierre           ###   ########.fr       */
+/*   Updated: 2024/06/14 13:54:01 by pierre           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
+
+/* depending on the number of commands calls redirect_io to create children */
 
 int	pipex(char **cmds, t_pipe data, int argc)
 {
@@ -27,6 +29,7 @@ int	pipex(char **cmds, t_pipe data, int argc)
 	last_child = redirect_io(data, cmds[i], WRITE_TO_FILE);
 	return (wait_children(last_child));
 }
+/* creates (pipe, children and redirects) */
 
 int	redirect_io(t_pipe data, char *cmd, int flag)
 {
@@ -46,6 +49,7 @@ int	redirect_io(t_pipe data, char *cmd, int flag)
 	close(fd[0]);
 	return (child);
 }
+/* manages children behaviour depending on the flag */
 
 void	redirect_files(char *cmd, t_pipe data, int *pipe, int flag)
 {
@@ -64,6 +68,7 @@ void	redirect_files(char *cmd, t_pipe data, int *pipe, int flag)
 	redirect(data.outfile, flag);
 	executer(data, cmd);
 }
+/* executes commands if they exists */
 
 void	executer(t_pipe data, char *cmd)
 {

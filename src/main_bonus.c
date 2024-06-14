@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pbeyloun <pbeyloun@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pierre <pierre@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 19:50:43 by pbeyloun          #+#    #+#             */
-/*   Updated: 2024/06/12 21:25:42 by pbeyloun         ###   ########.fr       */
+/*   Updated: 2024/06/14 13:47:27 by pierre           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ int	main(int argc, char **argv, char **envp)
 	data = init_data(argv, argc, envp);
 	return (pipex_bonus(argv, data, argc));
 }
+/* init the struct t_pipe and makes (works for bonus and mandatory) */
 
 t_pipe	init_data(char **argv, int argc, char **envp)
 {
@@ -46,6 +47,7 @@ t_pipe	init_data(char **argv, int argc, char **envp)
 	}
 	return (data);
 }
+/* Opens file, (depending on the flag) and redirects the fd on STDIN or STDOUT*/
 
 void	redirect(char *file, int flag)
 {

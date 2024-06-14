@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pbeyloun <pbeyloun@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pierre <pierre@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 19:59:36 by pierre            #+#    #+#             */
-/*   Updated: 2024/06/12 20:04:36 by pbeyloun         ###   ########.fr       */
+/*   Updated: 2024/06/14 13:43:45 by pierre           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
+
+/* concatenate cmd and error_messsage and adds a \n (Without any Malloc) */
 
 void	error_disp(char *cmd, char *error_message)
 {
@@ -26,6 +28,8 @@ void	error_disp(char *cmd, char *error_message)
 	buffer[cmd_len + error_len + 2] = 0;
 	write(STDERR_FILENO, buffer, error_len + cmd_len + 1);
 }
+/* concatenate cmd and error_messsage and adds a \n 
+(Without any Malloc) and exits */
 
 void	error_disp_exit(char *cmd, char *error_message, int eno)
 {
