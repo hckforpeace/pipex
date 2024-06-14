@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pierre <pierre@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pbeyloun <pbeyloun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 00:26:23 by pierre            #+#    #+#             */
-/*   Updated: 2024/06/14 13:50:42 by pierre           ###   ########.fr       */
+/*   Updated: 2024/06/14 15:24:48 by pbeyloun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
 
 /* returns a Pointer to whats after "PATH=" in the env */
-
 char	*get_paths(char **env)
 {
 	if (env == NULL)
@@ -24,8 +23,8 @@ char	*get_paths(char **env)
 		return (*env + 5);
 	return (NULL);
 }
-/* searches for a Path to the executable using access */
 
+/* searches for a Path to the executable using access */
 char	*gettest_path(char *envpath, char *cmd)
 {
 	char	*path;
@@ -52,8 +51,8 @@ char	*gettest_path(char *envpath, char *cmd)
 	clear_wordar(paths);
 	return (NULL);
 }
-/* free's a char** */
 
+/* free's a char** */
 void	clear_wordar(char **str)
 {
 	int	i;
@@ -68,8 +67,8 @@ void	clear_wordar(char **str)
 	}
 	free(str);
 }
-/* malloc() to concatenate path + '/' + cmd*/
 
+/* malloc() to concatenate path + '/' + cmd*/
 char	*add_cmdtopath(char **paths, char *cmd, int cmd_len, int idx)
 {
 	char	*path;
